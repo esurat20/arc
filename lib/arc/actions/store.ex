@@ -6,7 +6,15 @@ defmodule Arc.Actions.Store do
   end
 
   def store(definition, {file, scope}) when is_binary(file) or is_map(file) do
-    put(definition, {Arc.File.new(file), scope})
+    arc_file = 
+      file
+      |> Arc.File.new
+      |> Arc.File.identify_type
+
+    case definition.validate_content_type(arc_file.type) do
+      true -> put(definition, {definition.put_meta(arc_file), scope})
+      _    -> {:error, :invalid_type}  
+    end
   end
 
   def store(definition, filepath) when is_binary(filepath) or is_map(filepath) do
@@ -19,9 +27,11 @@ defmodule Arc.Actions.Store do
 
   defp put(_definition, { error = {:error, _msg}, _scope}), do: error
   defp put(definition, {%Arc.File{}=file, scope}) do
-    case definition.validate({file, scope}) do
-      true -> put_versions(definition, {file, scope})
-      _    -> {:error, :invalid_file}
+    case definition.validate(file) do
+      %{error: nil} -> 
+        put_versions(definition, {file, scope})
+      %{error: error} when is_list(error) -> 
+        {:error, error}
     end
   end
 
@@ -44,7 +54,7 @@ defmodule Arc.Actions.Store do
   end
 
   defp ensure_all_success(responses) do
-    errors = Enum.filter(responses, fn({version, resp}) -> elem(resp, 0) == :error end)
+    errors = Enum.filter(responses, fn({_version, resp}) -> elem(resp, 0) == :error end)
     if Enum.empty?(errors), do: responses, else: errors
   end
 

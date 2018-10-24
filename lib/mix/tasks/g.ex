@@ -38,6 +38,10 @@ defmodule Mix.Tasks.Arc do
     defmodule <%= inspect @uploader_model_name %> do
       use Arc.Definition
 
+      # Include validate certain file type:
+      # import Arc.Validation.File 
+      # import Arc.Validation.Image
+
       # Include ecto support (requires package arc_ecto installed):
       # use Arc.Ecto.Definition
 
@@ -51,8 +55,13 @@ defmodule Mix.Tasks.Arc do
       #   :custom_bucket_name
       # end
 
+      # Whitelist mime type:
+      # def validate_content_type(type) do
+      #   ~w(image/jpg, image/png) |> Enum.member?
+      # end
+
       # Whitelist file extensions:
-      # def validate({file, _}) do
+      # def validate(file) do
       #   ~w(.jpg .jpeg .gif .png) |> Enum.member?(Path.extname(file.file_name))
       # end
 

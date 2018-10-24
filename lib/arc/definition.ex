@@ -7,6 +7,16 @@ defmodule Arc.Definition do
       use Arc.Actions.Store
       use Arc.Actions.Delete
       use Arc.Actions.Url
+
+      def validate_content_type(_), do: true
+
+      defoverridable [validate_content_type: 1]
+    end
+  end
+
+  defmacro __before_compile__(_env) do
+    quote do
+      def put_meta(_, file), do: file
     end
   end
 end

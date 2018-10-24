@@ -1,6 +1,37 @@
 defmodule Arc.File do
-  defstruct [:path, :file_name, :binary]
+  defstruct [:path, :file_name, :binary, :type, :meta, :error]
 
+  # Given a remote file
+  def new(remote_path = "http" <> _) do
+    uri = URI.parse(remote_path)
+    filename = Path.basename(uri.path)
+
+    case save_file(uri, filename) do
+      {:ok, local_path} -> %Arc.File{path: local_path, file_name: filename}
+      :error -> {:error, :invalid_file_path}
+    end
+  end
+
+  # Accepts a path
+  def new(path) when is_binary(path) do
+    case File.exists?(path) do
+      true -> %Arc.File{path: path, file_name: Path.basename(path)}
+      false -> {:error, :invalid_file_path}
+    end
+  end
+
+  def new(%{binary: _binary} = file) do
+    write_binary(file)
+  end
+
+  # Accepts a map conforming to %Plug.Upload{} syntax
+  def new(%{filename: filename, path: path}) do
+    case File.exists?(path) do
+      true -> %Arc.File{path: path, file_name: filename}
+      false -> {:error, :invalid_file_path}
+    end
+  end
+  
   def generate_temporary_path(file \\ nil) do
     extension = Path.extname((file && file.path) || "")
 
@@ -12,39 +43,16 @@ defmodule Arc.File do
     Path.join(System.tmp_dir, file_name)
   end
 
-  # Given a remote file
-  def new(remote_path = "http" <> _) do
-    uri = URI.parse(remote_path)
-    filename = Path.basename(uri.path)
-
-    case save_file(uri, filename) do
-      {:ok, local_path} -> %Arc.File{path: local_path, file_name: filename}
-      :error -> {:error, :invalid_file_path}
-    end
-end
-
-  # Accepts a path
-  def new(path) when is_binary(path) do
-    case File.exists?(path) do
-      true -> %Arc.File{path: path, file_name: Path.basename(path)}
-      false -> {:error, :invalid_file_path}
-    end
-  end
-
-  def new(%{filename: filename, binary: binary}) do
-    %Arc.File{binary: binary, file_name: Path.basename(filename)}
-  end
-
-  # Accepts a map conforming to %Plug.Upload{} syntax
-  def new(%{filename: filename, path: path}) do
-    case File.exists?(path) do
-      true -> %Arc.File{path: path, file_name: filename}
-      false -> {:error, :invalid_file_path}
-    end
-  end
-
   def ensure_path(file = %{path: path}) when is_binary(path), do: file
   def ensure_path(file = %{binary: binary}) when is_binary(binary), do: write_binary(file)
+
+  def identify_type(file) do
+    type = 
+      System.cmd("file", ["-b", "--mime-type", "#{file.path}"])
+      |> String.trim
+
+    %{file | type: type}
+  end
 
   defp write_binary(file) do
     path = generate_temporary_path(file)
@@ -117,5 +125,5 @@ end
 
       true -> {:error, :out_of_tries}
     end
-  end
+  end  
 end
