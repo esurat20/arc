@@ -12,7 +12,7 @@ defmodule Arc.Actions.Store do
       |> Arc.File.identify_type
 
     case definition.validate_content_type(arc_file.type) do
-      true -> put(definition, {definition.put_meta(arc_file), scope})
+      true -> put(definition, {definition.put_meta(arc_file.type, arc_file), scope})
       _    -> {:error, :invalid_type}  
     end
   end
