@@ -11,6 +11,8 @@ defmodule Arc.Definition do
       def validate_content_type(_), do: true
 
       defoverridable [validate_content_type: 1]
+
+      @before_compile Arc.Definition
     end
   end
 
