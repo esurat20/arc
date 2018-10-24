@@ -47,11 +47,9 @@ defmodule Arc.File do
   def ensure_path(file = %{binary: binary}) when is_binary(binary), do: write_binary(file)
 
   def identify_type(file) do
-    type = 
-      System.cmd("file", ["-b", "--mime-type", "#{file.path}"])
-      |> String.trim
-
-    %{file | type: type}
+    {type, 0} =  System.cmd("file", ["-b", "--mime-type", "#{file.path}"])
+  
+    %{file | type: String.trim(type)}
   end
 
   defp write_binary(file) do
