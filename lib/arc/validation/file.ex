@@ -7,7 +7,7 @@ defmodule Arc.Validation.File do
   }
   
   def validate_file_format(file, allowed_formats) do
-    format = String.slice(Path.extname(String.downcase(file.filename)), 1..20)
+    format = String.slice(Path.extname(String.downcase(file.file_name)), 1..20)
     if Enum.member?(allowed_formats, format) do
       file
     else
