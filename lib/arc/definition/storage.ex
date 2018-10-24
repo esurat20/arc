@@ -7,7 +7,7 @@ defmodule Arc.Definition.Storage do
       def bucket, do: Application.fetch_env!(:arc, :bucket)
       def filename(_, {file, _}), do: Path.basename(file.file_name, Path.extname(file.file_name))
       def storage_dir(_, _), do: Application.get_env(:arc, :storage_dir, "uploads")
-      def validate(_), do: true
+      def validate(file), do: file
       def default_url(version, _), do: default_url(version)
       def default_url(_), do: nil
       def __storage, do: Application.get_env(:arc, :storage, Arc.Storage.S3)
