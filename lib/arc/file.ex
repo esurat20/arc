@@ -1,5 +1,11 @@
 defmodule Arc.File do
-  defstruct [:path, :file_name, :binary, :type, :meta, :error]
+  defstruct  path: nil,
+             file_name: :string,
+             binary: nil,
+             type: :string,
+             meta: nil,
+             valid?: true,
+             errors: []
 
   # Given a remote file
   def new(remote_path = "http" <> _) do

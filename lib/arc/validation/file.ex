@@ -11,7 +11,7 @@ defmodule Arc.Validation.File do
     if Enum.member?(allowed_formats, format) do
       file
     else
-      %{file | error: ["has invalid format, supports #{allowed_formats} files" | file.error]}
+      %{file | valid?: false, errors: ["has invalid format, supports #{allowed_formats} files" | file.errors]}
     end
   end
 

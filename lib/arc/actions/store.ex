@@ -28,10 +28,10 @@ defmodule Arc.Actions.Store do
   defp put(_definition, { error = {:error, _msg}, _scope}), do: error
   defp put(definition, {%Arc.File{}=file, scope}) do
     case definition.validate(file) do
-      %{error: nil} -> 
+      %{valid?: true} -> 
         put_versions(definition, {file, scope})
-      %{error: error} when is_list(error) -> 
-        {:error, error}
+      %{valid?: false, errors: errors} when is_list(errors) -> 
+        {:error, errors}
     end
   end
 

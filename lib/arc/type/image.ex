@@ -2,9 +2,9 @@ defmodule Arc.Type.Image do
   
   @verbose_regexp ~r/\b(?<format>\S+) (?<width>\d+)x(?<height>\d+)/
 
-  defmacro __using__() do
+  defmacro __using__(_opts) do
   	quote do
-      def put_meta("image" <> _, file), do: Arc.Type.Image.put_meta(file)
+      def put_meta("image/" <> _, file), do: Arc.Type.Image.put_meta(file)
     end
   end
 

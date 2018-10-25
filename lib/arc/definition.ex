@@ -8,6 +8,8 @@ defmodule Arc.Definition do
       use Arc.Actions.Delete
       use Arc.Actions.Url
 
+      use Arc.Type.Image
+
       def validate_content_type(_), do: true
 
       defoverridable [validate_content_type: 1]
