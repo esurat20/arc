@@ -17,7 +17,7 @@ defmodule Arc.Validator do
       true  ->
         struct
       false -> 
-        %{struct | error: ["#{message} #{target_value} #{measure}" | struct.error]}
+        %{struct | valid?: false, errors: ["#{message} #{target_value} #{measure}" | struct.errors]}
     end
   end
 end

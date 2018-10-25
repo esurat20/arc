@@ -30,7 +30,7 @@ defmodule Arc.Actions.Store do
     case definition.validate(file) do
       %{valid?: true} -> 
         put_versions(definition, {file, scope})
-      %{valid?: false, errors: errors} when is_list(errors) -> 
+      %{valid?: false, errors: errors} -> 
         {:error, errors}
     end
   end
