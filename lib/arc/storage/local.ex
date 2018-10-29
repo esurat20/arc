@@ -14,7 +14,10 @@ defmodule Arc.Storage.Local do
   end
 
   def url(definition, version, file_and_scope, _options \\ []) do
-    local_path = build_local_path(definition, version, file_and_scope)
+    host_url = Application.get_env(:arc, :asset_host, "/")
+    local_path = 
+      build_local_path(definition, version, file_and_scope)
+      |> local_path_with_host(host_url)
 
     url = if String.starts_with?(local_path, "/") do
       local_path
@@ -34,6 +37,13 @@ defmodule Arc.Storage.Local do
     Path.join([
       definition.storage_dir(version, file_and_scope),
       Arc.Definition.Versioning.resolve_file_name(definition, version, file_and_scope)
+    ])
+  end
+
+  defp local_path_with_host(local_path, host) do
+    Path.join([
+      host,
+      local_path
     ])
   end
 end
