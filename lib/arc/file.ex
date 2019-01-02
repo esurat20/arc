@@ -8,6 +8,8 @@ defmodule Arc.File do
              errors: []
 
   # Given a remote file
+  def new("https" <> url), do: new("http" <> url)
+
   def new(remote_path = "http" <> _) do
     uri = URI.parse(remote_path)
     filename = Path.basename(uri.path)
