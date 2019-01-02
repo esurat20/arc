@@ -11,7 +11,7 @@ defmodule Arc.File do
   def new(remote_path = "https" <> _), do: new({:remote_path, remote_path})
   def new(remote_path = "http" <> _), do: new({:remote_path, remote_path})
 
-  def new({:remote, remote_path}) do
+  def new({:remote_path, remote_path}) do
     uri = URI.parse(remote_path)
     filename = Path.basename(uri.path)
 
